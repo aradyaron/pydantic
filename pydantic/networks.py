@@ -24,6 +24,7 @@ __all__ = [
     'AnyHttpUrl',
     'FileUrl',
     'HttpUrl',
+    'HttpsUrl',
     'UrlConstraints',
     'EmailStr',
     'NameEmail',
@@ -56,6 +57,7 @@ AnyUrl = Url
 # host_required is false because all schemes are "special" so host is required by rust-url automatically
 AnyHttpUrl = Annotated[Url, UrlConstraints(allowed_schemes=['http', 'https'])]
 HttpUrl = Annotated[Url, UrlConstraints(max_length=2083, allowed_schemes=['http', 'https'])]
+HttpsUrl = Annotated[Url, UrlConstraints(max_length=2083, allowed_schemes=['https'])]
 FileUrl = Annotated[Url, UrlConstraints(allowed_schemes=['file'])]
 PostgresDsn = Annotated[
     MultiHostUrl,

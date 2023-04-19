@@ -5,6 +5,7 @@ For URI/URL validation the following types are available:
 - `AnyUrl`: any scheme allowed, TLD not required, host required
 - `AnyHttpUrl`: scheme `http` or `https`, TLD not required, host required
 - `HttpUrl`: scheme `http` or `https`, TLD required, host required, max length 2083
+- `HttpsUrl`: scheme `https`, TLD required, host required, max length 2083
 - `FileUrl`: scheme `file`, host not required
 - `PostgresDsn`: user info required, TLD not required, host required,
   as of V.10 `PostgresDsn` supports multiple hosts. The following schemes are supported:

@@ -65,6 +65,7 @@ __all__ = [
     'AnyHttpUrl',
     'FileUrl',
     'HttpUrl',
+    'HttpsUrl',
     'UrlConstraints',
     'EmailStr',
     'NameEmail',

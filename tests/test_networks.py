@@ -8,6 +8,7 @@ from pydantic import (
     BaseModel,
     CockroachDsn,
     FileUrl,
+    HttpsUrl,
     HttpUrl,
     KafkaDsn,
     MariaDBDsn,
@@ -274,6 +275,26 @@ def test_http_url_success(value, expected):
 
 
 @pytest.mark.parametrize(
+    'value,expected',
+    [
+        ('https://example.org', 'https://example.org/'),
+        ('https://example.org?a=1&b=2', 'https://example.org/?a=1&b=2'),
+        ('https://example.org#a=3;b=3', 'https://example.org/#a=3;b=3'),
+        ('https://foo_bar.example.com/', 'https://foo_bar.example.com/'),
+        ('https://exam_ple.com/', 'https://exam_ple.com/'),
+        ('https://example.xn--p1ai', 'https://example.xn--p1ai/'),
+        ('https://example.xn--vermgensberatung-pwb', 'https://example.xn--vermgensberatung-pwb/'),
+        ('https://example.xn--zfr164b', 'https://example.xn--zfr164b/'),
+    ],
+)
+def test_https_url_success(value, expected):
+    class Model(BaseModel):
+        v: HttpUrl
+
+    assert str(Model(v=value).v) == expected
+
+
+@pytest.mark.parametrize(
     'value,err_type,err_msg',
     [
         (
@@ -291,6 +312,37 @@ def test_http_url_success(value, expected):
 def test_http_url_invalid(value, err_type, err_msg):
     class Model(BaseModel):
         v: HttpUrl
+
+    with pytest.raises(ValidationError) as exc_info:
+        Model(v=value)
+    assert len(exc_info.value.errors()) == 1, exc_info.value.errors()
+    error = exc_info.value.errors()[0]
+    assert {'type': error['type'], 'msg': error['msg']} == {'type': err_type, 'msg': err_msg}
+
+
+@pytest.mark.parametrize(
+    'value,err_type,err_msg',
+    [
+        (
+            'ftp://example.com/',
+            'url_scheme',
+            "URL scheme should be 'https'",
+        ),
+        (
+            'http://example.com/',
+            'url_scheme',
+            "URL scheme should be 'https'",
+        ),
+        (
+            'x' * 2084,
+            'url_too_long',
+            'URL should have at most 2083 characters',
+        ),
+    ],
+)
+def test_https_url_invalid(value, err_type, err_msg):
+    class Model(BaseModel):
+        v: HttpsUrl
 
     with pytest.raises(ValidationError) as exc_info:
         Model(v=value)
